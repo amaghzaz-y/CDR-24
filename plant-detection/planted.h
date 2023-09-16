@@ -1,6 +1,4 @@
-#pragma once
-#include <stdio.h>
-#include <time.h>
+#pragma onces
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define max3(a, b, c) max(max(a, b), c)
