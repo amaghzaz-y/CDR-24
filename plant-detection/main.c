@@ -22,7 +22,8 @@ int main() {
     clock_t end_time = clock();
     double elapsed_time =
         (double)(end_time - start_time) / CLOCKS_PER_SEC * 1000;
-    printf("Elapsed time: %f ms\n", elapsed_time);
+
+    printf("Elapsed time: %f ms - %d.png\n", elapsed_time, i);
     char str[80];
     sprintf(str, "../test/mask-%d.png", i);
     int success = stbi_write_png(str, image.width, image.height, image.channels,
