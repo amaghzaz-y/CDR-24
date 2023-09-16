@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/kurhnel/Projects/CDR-24/plant-detection/build",
+  "command": "/usr/bin/clang -I/home/kurhnel/Projects/CDR-24/plant-detection/external/stb -g -o CMakeFiles/PLANTDETECTOR.dir/main.c.o -c /home/kurhnel/Projects/CDR-24/plant-detection/main.c",
+  "file": "/home/kurhnel/Projects/CDR-24/plant-detection/main.c",
+  "output": "CMakeFiles/PLANTDETECTOR.dir/main.c.o"
+}
+]

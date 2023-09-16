@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Linux-clang++"
+	BuildStamp="20230916-1523-Experimental"
+	Name="cybr-jnky"
+	Generator="ctest-3.26.0"
+	CompilerName="/usr/bin/clang++"
+	CompilerVersion=""
+	OSName="Linux"
+	Hostname="cybr-jnky"
+	OSRelease="5.19.0-46-generic"
+	OSVersion="#47-Ubuntu SMP PREEMPT_DYNAMIC Fri Jun 16 13:30:11 UTC 2023"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="142"
+	ProcessorCacheSize="6144"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="2047"
+	TotalPhysicalMemory="15730"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="3548.59"
+	>
+	<Testing>
+		<StartDateTime>Sep 16 21:11 CEST</StartDateTime>
+		<StartTestTime>1694891476</StartTestTime>
+		<TestList/>
+		<EndDateTime>Sep 16 21:11 CEST</EndDateTime>
+		<EndTestTime>1694891476</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
