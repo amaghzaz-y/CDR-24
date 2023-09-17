@@ -23,7 +23,12 @@ struct Image {
   int width;
   int height;
   int channels;
-} Image;
+};
+
+struct PlantXY {
+  int x;
+  int y;
+};
 
 const struct HSV LOWER = {45, 15, 15};
 const struct HSV UPPER = {
@@ -114,25 +119,33 @@ void planted_sliding_window(struct Image *image, int window_size) {
             int k =
                 y * image->width * image->channels + x * image->channels + 2;
             image->data[i] = _WHITE;
-            image->data[j] = _WHITE;
-            image->data[k] = _WHITE;
-          }
-        }
-      } else {
-        for (int y = by; y < by + window_size; y++) {
-          for (int x = bx; x < bx + window_size; x++) {
-            int i =
-                y * image->width * image->channels + x * image->channels + 0;
-            int j =
-                y * image->width * image->channels + x * image->channels + 1;
-            int k =
-                y * image->width * image->channels + x * image->channels + 2;
-            image->data[i] = _BLACK;
             image->data[j] = _BLACK;
             image->data[k] = _BLACK;
           }
         }
       }
+      //
+      // ! We don't need to convert the rest to black
+      // ! convert to black only for compression purposes
+      //
+      // else {
+      //   for (int y = by; y < by + window_size; y++) {
+      //     for (int x = bx; x < bx + window_size; x++) {
+      //       int i =
+      //           y * image->width * image->channels + x * image->channels +
+      //           0;
+      //       int j =
+      //           y * image->width * image->channels + x * image->channels +
+      //           1;
+      //       int k =
+      //           y * image->width * image->channels + x * image->channels +
+      //           2;
+      //       image->data[i] = _BLACK;
+      //       image->data[j] = _BLACK;
+      //       image->data[k] = _BLACK;
+      //     }
+      //   }
+      // }
     }
   }
 }
