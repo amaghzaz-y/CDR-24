@@ -17,8 +17,13 @@ int main() {
       exit(0);
     }
     clock_t start_time = clock();
-    planted_sliding_window(&image, 10);
-    // planted_full(&image);
+    struct Plant plants[100];
+    int total = planted_sliding_window(&image, plants, 10);
+    for (int i = 0; i < total; i++) {
+      printf("%d  ==> %d %d\n", i, plants[i].x, plants[i].y);
+    }
+
+    planted_full(&image);
     clock_t end_time = clock();
     double elapsed_time =
         (double)(end_time - start_time) / CLOCKS_PER_SEC * 1000;
