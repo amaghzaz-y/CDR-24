@@ -42,21 +42,41 @@ const struct RGB WHITE = {255, 255, 255};
 const float _WHITE = 255;
 const float _BLACK = 0;
 
+// fast sqrt function to avoid importing math.h duhhh
+int int_sqrt(int x) {
+  int s, t;
+  s = 1;
+  t = x;
+  while (s < t) {
+    s <<= 1;
+    t >>= 1;
+  }
+  do {
+    t = s;
+    s = (x / s + s) >> 1;
+  } while (s < t);
+  return t;
+}
+
 // fast distance evaluation of plant to plant based on window size
 // returns true if the point a close to point b
 bool planted_is_same_plant(struct Plant *a, struct Plant *b, int window_size) {
+  // int d = int_sqrt(())
   int d_x = a->x - b->x;
   int d_y = a->y - b->y;
   if (d_x < 0)
     d_x = d_x * -1;
   if (d_y < 0)
     d_y = d_y * -1;
-  if (d_x <= window_size && d_y <= window_size) {
+  int d = d_x + d_y;
+  if (d <= window_size) {
     return true;
   }
   return false;
 }
 
+// in place rgb to hsv converter
+// !IMPORTANT it changes the underlying rgb values;
 void planted_rgb_to_hsv(struct RGB *rgb, struct HSV *hsv) {
   rgb->r = rgb->r / 255;
   rgb->g = rgb->g / 255;
@@ -80,7 +100,6 @@ void planted_rgb_to_hsv(struct RGB *rgb, struct HSV *hsv) {
   hsv->h = hue;
   hsv->s = ((maxc - minc) / maxc) * 100;
   hsv->v = maxc * 100;
-  return;
 }
 
 // returns true if the desired color is detected
@@ -97,6 +116,7 @@ bool planted_apply_mask(struct RGB *rgb, struct HSV *hsv) {
 
 // window_size = 10 yields the best results for 240p image
 // return total plants pieces detected
+// sliding window mask for fast iteration
 int planted_sliding_window(struct Image *image, struct Plant *plants,
                            int window_size) {
   struct RGB avg = {0, 0, 0};
@@ -159,30 +179,74 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
   return index;
 }
 
-// int planted_get_plants_xy(struct Image *image, struct Plant *plants,
-//                           int window_size) {
-//   int total = planted_sliding_window(image, plants, window_size);
-//   int num = 0;
-//   for (int i = 0; i < total; i++) {
-//     for (int e = 0; e < total; e++) {
-//       if (plants[i].x == plants[e].x && plants[i].y == plants[e].y) {
-//         plants[e].x = 0;
-//         plants[e].y = 0;
-//         continue;
-//       }
-//       if (plants[e].x == 0 && plants[e].y == 0) {
-//         continue;
-//       }
-//       if (planted_is_same_plant(&plants[i], &plants[e], window_size)) {
-//         plants[i].x = (plants[i].x + plants[e].x) / 2;
-//         plants[i].y = (plants[i].y + plants[e].y) / 2;
-//         num += 1;
-//       }
-//     }
-//   }
-//   return num;
-// }
+// the function name says it all dumbass
+void planted_swap(struct Plant *a, struct Plant *b) {
+  struct Plant temp = *a;
+  *a = *b;
+  *b = temp;
+}
 
+// compare two plants depending on the distance from the origin
+// using manhattan distance
+bool planted_cmp(struct Plant *a, struct Plant *b) {
+  int d_a = a->x + a->y;
+  int d_b = b->x + b->y;
+  if (d_a < 0)
+    d_a *= -1;
+  if (d_b < 0)
+    d_b *= -1;
+  if (d_a > d_b)
+    return true;
+  return false;
+}
+
+// bubble sort an array of plants
+void planted_sort_plants(struct Plant plants[], int len) {
+  bool swapped;
+  for (int i = 0; i < len - 1; i++) {
+    swapped = false;
+    for (int j = 0; j < len - i - 1; j++) {
+      if (planted_cmp(&plants[j], &plants[j + 1])) {
+        planted_swap(&plants[j], &plants[j + 1]);
+        swapped = true;
+      }
+    }
+    if (!swapped)
+      break;
+  }
+}
+
+// decrease window_size for maximum accuracy
+int planted_get_plants_xy(struct Image *image, struct Plant *plants,
+                          int window_size) {
+  int total = planted_sliding_window(image, plants, window_size);
+  // we sort the plants to make it easier to merge points for the same plant
+  planted_sort_plants(plants, total);
+  struct Plant temp[total];
+  int index = 0;
+  int lock = false;
+  temp[0].x = plants[0].x;
+  temp[0].y = plants[0].y;
+  // we average out values that belongs to the same plants in order to reduce
+  // the
+  for (int i = 0; i < total - 1; i++) {
+    if (planted_is_same_plant(&plants[i], &plants[i + 1], window_size)) {
+      temp[index].x = (plants[i].x + plants[i + 1].x) / 2;
+      temp[index].y = (plants[i].y + plants[i + 1].y) / 2;
+    } else {
+      index += 1;
+      temp[index].x = plants[i].x;
+      temp[index].y = plants[i].y;
+    }
+  }
+  for (int i = 0; i < index; i++) {
+    plants[i].x = temp[i].x;
+    plants[i].y = temp[i].y;
+  }
+  return index;
+}
+
+// full precision mask
 void planted_full(struct Image *image) {
   struct RGB rgb;
   struct HSV hsv;
