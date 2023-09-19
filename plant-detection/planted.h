@@ -6,6 +6,7 @@
 #define bool int
 #define true 1
 #define false 0
+#include "stdio.h"
 
 struct RGB {
   float r;
@@ -113,7 +114,32 @@ bool planted_apply_mask(struct RGB *rgb, struct HSV *hsv) {
   }
   return false;
 }
-
+// full precision mask
+int planted_full(struct Image *image, struct Plant *plants) {
+  struct RGB rgb;
+  struct HSV hsv;
+  int index = 0;
+  for (int y = 0; y < image->height; y++) {
+    for (int x = 0; x < image->width; x++) {
+      int i = y * image->width * image->channels + x * image->channels + 0;
+      int j = y * image->width * image->channels + x * image->channels + 1;
+      int k = y * image->width * image->channels + x * image->channels + 2;
+      rgb.r = image->data[i];
+      rgb.g = image->data[j];
+      rgb.b = image->data[k];
+      planted_rgb_to_hsv(&rgb, &hsv);
+      if (planted_apply_mask(&rgb, &hsv)) {
+        plants[index].x = x;
+        plants[index].y = y;
+        index += 1;
+        image->data[i] = _WHITE;
+        image->data[j] = _BLACK;
+        image->data[k] = _BLACK;
+      }
+    }
+  }
+  return index;
+}
 // window_size = 10 yields the best results for 240p image
 // return total plants pieces detected
 // sliding window mask for fast iteration
@@ -160,17 +186,16 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
           }
         }
         struct Plant plant = {(bx + window_size) / 2, (by + window_size) / 2};
-        int last_index = index - 1;
-        // index is 0 if index is 0
-        if (last_index < 0)
-          last_index = 0;
+        // plants[index].x = (plants[index].x + plants[last_index].x) / 2;
+        // plants[index].y = (plants[index].y + plants[last_index].y) / 2;
 
         // calculate the average x,y which is the center of the plant
-        if (planted_is_same_plant(&plant, &plants[last_index], window_size)) {
-          plants[index].x = (plants[index].x + plants[last_index].x) / 2;
-          plants[index].y = (plants[index].y + plants[last_index].y) / 2;
+        if (planted_is_same_plant(&plant, &plants[index - 1], window_size)) {
+          plants[index].x = (plants[index].x + plants[index - 1].x) / 2;
+          plants[index].y = (plants[index].y + plants[index - 1].y) / 2;
         } else {
-          plants[index] = plant;
+          plants[index].x = plant.x;
+          plants[index].y = plant.y;
           index += 1;
         };
       }
@@ -215,16 +240,66 @@ void planted_sort_plants(struct Plant plants[], int len) {
       break;
   }
 }
-
+void planted_set_crosshair(struct Image *image, struct Plant *plants, int len,
+                           int crosshair_size) {
+  for (int i = 0; i < len; i++) {
+    for (int e = 0; e < crosshair_size; e++) {
+      int x = plants[i].x - e;
+      int y = plants[i].y - e;
+      int i = y * image->width * image->channels + x * image->channels + 0;
+      int j = y * image->width * image->channels + x * image->channels + 1;
+      int k = y * image->width * image->channels + x * image->channels + 2;
+      image->data[i] = 0;
+      image->data[j] = 0;
+      image->data[k] = 0;
+    }
+  }
+  for (int i = 0; i < len; i++) {
+    for (int e = 0; e < crosshair_size; e++) {
+      int x = plants[i].x + e;
+      int y = plants[i].y + e;
+      int i = y * image->width * image->channels + x * image->channels + 0;
+      int j = y * image->width * image->channels + x * image->channels + 1;
+      int k = y * image->width * image->channels + x * image->channels + 2;
+      image->data[i] = 0;
+      image->data[j] = 0;
+      image->data[k] = 0;
+    }
+  }
+  for (int i = 0; i < len; i++) {
+    for (int e = 0; e < crosshair_size; e++) {
+      int x = plants[i].x - e;
+      int y = plants[i].y + e;
+      int i = y * image->width * image->channels + x * image->channels + 0;
+      int j = y * image->width * image->channels + x * image->channels + 1;
+      int k = y * image->width * image->channels + x * image->channels + 2;
+      image->data[i] = 0;
+      image->data[j] = 0;
+      image->data[k] = 0;
+    }
+  }
+  for (int i = 0; i < len; i++) {
+    for (int e = 0; e < crosshair_size; e++) {
+      int x = plants[i].x + e;
+      int y = plants[i].y - e;
+      int i = y * image->width * image->channels + x * image->channels + 0;
+      int j = y * image->width * image->channels + x * image->channels + 1;
+      int k = y * image->width * image->channels + x * image->channels + 2;
+      image->data[i] = 0;
+      image->data[j] = 0;
+      image->data[k] = 0;
+    }
+  }
+}
 // decrease window_size for maximum accuracy
 int planted_get_plants_xy(struct Image *image, struct Plant *plants,
                           int window_size) {
   int total = planted_sliding_window(image, plants, window_size);
+  printf("%d\n", total);
   // we sort the plants to make it easier to merge points for the same plant
   planted_sort_plants(plants, total);
   struct Plant temp[total];
   int index = 0;
-  int lock = false;
   temp[0].x = plants[0].x;
   temp[0].y = plants[0].y;
   // we average out values that belongs to the same plants in order to reduce
@@ -244,26 +319,4 @@ int planted_get_plants_xy(struct Image *image, struct Plant *plants,
     plants[i].y = temp[i].y;
   }
   return index;
-}
-
-// full precision mask
-void planted_full(struct Image *image) {
-  struct RGB rgb;
-  struct HSV hsv;
-  for (int y = 0; y < image->height; y++) {
-    for (int x = 0; x < image->width; x++) {
-      int i = y * image->width * image->channels + x * image->channels + 0;
-      int j = y * image->width * image->channels + x * image->channels + 1;
-      int k = y * image->width * image->channels + x * image->channels + 2;
-      rgb.r = image->data[i];
-      rgb.g = image->data[j];
-      rgb.b = image->data[k];
-      planted_rgb_to_hsv(&rgb, &hsv);
-      planted_apply_mask(&rgb, &hsv);
-      image->data[i] = rgb.r;
-      image->data[j] = rgb.g;
-      image->data[k] = rgb.b;
-    }
-  }
-  return;
 }
