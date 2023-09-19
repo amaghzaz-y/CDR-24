@@ -20,11 +20,7 @@ int main() {
     clock_t start_time = clock();
     struct Plant plants[10000];
     int total = planted_get_plants_xy(&image, plants, 10);
-    planted_set_crosshair(&image, plants, total, 10);
-    printf("%d\n", total);
-    // for (int i = 0; i < total; i++) {
-    //   printf("%d  - x:%d y:%d\n", i, plants[i].x, plants[i].y);
-    // }
+    planted_set_crosshair(&image, plants, total, 4);
     clock_t end_time = clock();
     double elapsed_time =
         (double)(end_time - start_time) / CLOCKS_PER_SEC * 1000;

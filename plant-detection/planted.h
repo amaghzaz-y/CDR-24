@@ -6,7 +6,6 @@
 #define bool int
 #define true 1
 #define false 0
-#include "stdio.h"
 
 struct RGB {
   float r;
@@ -181,14 +180,11 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
             int k =
                 y * image->width * image->channels + x * image->channels + 2;
             image->data[i] = _WHITE;
-            image->data[j] = _BLACK;
-            image->data[k] = _BLACK;
+            image->data[j] = _WHITE;
+            image->data[k] = _WHITE;
           }
         }
-        struct Plant plant = {(bx + window_size) / 2, (by + window_size) / 2};
-        // plants[index].x = (plants[index].x + plants[last_index].x) / 2;
-        // plants[index].y = (plants[index].y + plants[last_index].y) / 2;
-
+        struct Plant plant = {(bx + window_size / 2), (by + window_size / 2)};
         // calculate the average x,y which is the center of the plant
         if (planted_is_same_plant(&plant, &plants[index - 1], window_size)) {
           plants[index].x = (plants[index].x + plants[index - 1].x) / 2;
@@ -198,6 +194,20 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
           plants[index].y = plant.y;
           index += 1;
         };
+      } else {
+        for (int y = by; y < by + window_size; y++) {
+          for (int x = bx; x < bx + window_size; x++) {
+            int i =
+                y * image->width * image->channels + x * image->channels + 0;
+            int j =
+                y * image->width * image->channels + x * image->channels + 1;
+            int k =
+                y * image->width * image->channels + x * image->channels + 2;
+            image->data[i] = _BLACK;
+            image->data[j] = _BLACK;
+            image->data[k] = _BLACK;
+          }
+        }
       }
     }
   }
@@ -292,31 +302,10 @@ void planted_set_crosshair(struct Image *image, struct Plant *plants, int len,
   }
 }
 // decrease window_size for maximum accuracy
+// function to fine tune XY
 int planted_get_plants_xy(struct Image *image, struct Plant *plants,
                           int window_size) {
   int total = planted_sliding_window(image, plants, window_size);
-  printf("%d\n", total);
-  // we sort the plants to make it easier to merge points for the same plant
-  planted_sort_plants(plants, total);
-  struct Plant temp[total];
-  int index = 0;
-  temp[0].x = plants[0].x;
-  temp[0].y = plants[0].y;
-  // we average out values that belongs to the same plants in order to reduce
-  // the
-  for (int i = 0; i < total - 1; i++) {
-    if (planted_is_same_plant(&plants[i], &plants[i + 1], window_size)) {
-      temp[index].x = (plants[i].x + plants[i + 1].x) / 2;
-      temp[index].y = (plants[i].y + plants[i + 1].y) / 2;
-    } else {
-      index += 1;
-      temp[index].x = plants[i].x;
-      temp[index].y = plants[i].y;
-    }
-  }
-  for (int i = 0; i < index; i++) {
-    plants[i].x = temp[i].x;
-    plants[i].y = temp[i].y;
-  }
-  return index;
+  // TODO! FINE TUNE THE CENTER
+  return total;
 }
