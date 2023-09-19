@@ -179,9 +179,9 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
                 y * image->width * image->channels + x * image->channels + 1;
             int k =
                 y * image->width * image->channels + x * image->channels + 2;
-            image->data[i] = _WHITE;
-            image->data[j] = _WHITE;
-            image->data[k] = _WHITE;
+            image->data[i] = 0;
+            image->data[j] = 255;
+            image->data[k] = 0;
           }
         }
         struct Plant plant = {(bx + window_size / 2), (by + window_size / 2)};
@@ -195,19 +195,20 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
           index += 1;
         };
       } else {
-        for (int y = by; y < by + window_size; y++) {
-          for (int x = bx; x < bx + window_size; x++) {
-            int i =
-                y * image->width * image->channels + x * image->channels + 0;
-            int j =
-                y * image->width * image->channels + x * image->channels + 1;
-            int k =
-                y * image->width * image->channels + x * image->channels + 2;
-            image->data[i] = _BLACK;
-            image->data[j] = _BLACK;
-            image->data[k] = _BLACK;
-          }
-        }
+        // MASK OUT THE REST
+        // for (int y = by; y < by + window_size; y++) {
+        //   for (int x = bx; x < bx + window_size; x++) {
+        //     int i =
+        //         y * image->width * image->channels + x * image->channels + 0;
+        //     int j =
+        //         y * image->width * image->channels + x * image->channels + 1;
+        //     int k =
+        //         y * image->width * image->channels + x * image->channels + 2;
+        //     image->data[i] = _BLACK;
+        //     image->data[j] = _BLACK;
+        //     image->data[k] = _BLACK;
+        //   }
+        // }
       }
     }
   }
