@@ -1,12 +1,10 @@
-
 #include "planted.h"
-#include <math.h>
 #include <stb/stb_image.h>
 #include <stb/stb_image_write.h>
 #include <stdio.h>
 #include <time.h>
 
-int main() {
+int test() {
   const char *files[4] = {"../test/1.jpg", "../test/2.jpg", "../test/3.jpg",
                           "../test/4.jpg"};
   struct Image image;
@@ -24,8 +22,7 @@ int main() {
     clock_t end_time = clock();
     double elapsed_time =
         (double)(end_time - start_time) / CLOCKS_PER_SEC * 1000;
-
-    printf("Elapsed time: %f ms - %d.png\n", elapsed_time, i);
+    printf("elapsed time: %.1f ms - %d.png\n", elapsed_time, i);
     char str[80];
     sprintf(str, "../test/mask-%d.png", i);
     int success = stbi_write_png(str, image.width, image.height, image.channels,
@@ -34,3 +31,5 @@ int main() {
   }
   return 0;
 }
+
+int main() { test(); }
