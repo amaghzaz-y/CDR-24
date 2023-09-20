@@ -64,10 +64,8 @@ bool planted_is_same_plant(struct Plant *a, struct Plant *b, int window_size) {
   // int d = int_sqrt(())
   int d_x = a->x - b->x;
   int d_y = a->y - b->y;
-  if (d_x < 0)
-    d_x = d_x * -1;
-  if (d_y < 0)
-    d_y = d_y * -1;
+  if (d_x < 0) d_x = d_x * -1;
+  if (d_y < 0) d_y = d_y * -1;
   int d = d_x + d_y;
   if (d <= window_size) {
     return true;
@@ -93,10 +91,8 @@ void planted_rgb_to_hsv(struct RGB *rgb, struct HSV *hsv) {
   if (maxc == rgb->b) {
     hue = 4.0 + (rgb->r - rgb->g) / (maxc - minc);
   }
-  int value = maxc * 100;
   hue = hue * 60;
-  if (hue < 0)
-    hue = hue + 360;
+  if (hue < 0) hue = hue + 360;
   hsv->h = hue;
   hsv->s = ((maxc - minc) / maxc) * 100;
   hsv->v = maxc * 100;
@@ -227,12 +223,9 @@ void planted_swap(struct Plant *a, struct Plant *b) {
 bool planted_cmp(struct Plant *a, struct Plant *b) {
   int d_a = a->x + a->y;
   int d_b = b->x + b->y;
-  if (d_a < 0)
-    d_a *= -1;
-  if (d_b < 0)
-    d_b *= -1;
-  if (d_a > d_b)
-    return true;
+  if (d_a < 0) d_a *= -1;
+  if (d_b < 0) d_b *= -1;
+  if (d_a > d_b) return true;
   return false;
 }
 
@@ -247,8 +240,7 @@ void planted_sort_plants(struct Plant plants[], int len) {
         swapped = true;
       }
     }
-    if (!swapped)
-      break;
+    if (!swapped) break;
   }
 }
 void planted_set_crosshair(struct Image *image, struct Plant *plants, int len,
