@@ -43,20 +43,20 @@ const float _WHITE = 255;
 const float _BLACK = 0;
 
 // fast sqrt function to avoid importing math.h duhhh
-int int_sqrt(int x) {
-  int s, t;
-  s = 1;
-  t = x;
-  while (s < t) {
-    s <<= 1;
-    t >>= 1;
-  }
-  do {
-    t = s;
-    s = (x / s + s) >> 1;
-  } while (s < t);
-  return t;
-}
+// int int_sqrt(int x) {
+//   int s, t;
+//   s = 1;
+//   t = x;
+//   while (s < t) {
+//     s <<= 1;
+//     t >>= 1;
+//   }
+//   do {
+//     t = s;
+//     s = (x / s + s) >> 1;
+//   } while (s < t);
+//   return t;
+// }
 
 // fast distance evaluation of plant to plant based on window size
 // returns true if the point a close to point b
@@ -191,7 +191,7 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
           index += 1;
         };
       } else {
-        // MASK OUT THE REST
+        // MASK OUT THE REST IN BLACK
         // for (int y = by; y < by + window_size; y++) {
         //   for (int x = bx; x < bx + window_size; x++) {
         //     int i =
