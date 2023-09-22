@@ -9,7 +9,6 @@ const char* ssid = "DaBox";
 const char* password = "Esiee2002";
 
 void startCameraServer();
-void setupLedFlash(int pin);
 void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
@@ -80,7 +79,7 @@ void setup() {
   Serial.println("' to connect");
 }
 void loop() {
-  delay(1000);
+  delay(10000);
   Serial.println(WiFi.localIP());
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("not connected");

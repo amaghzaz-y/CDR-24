@@ -18,7 +18,7 @@ int test() {
     }
     clock_t start_time = clock();
     struct Plant plants[10000];
-    int total = planted_get_plants_xy(&image, plants, 10);
+    int total = planted_get_plants_xy(&image, plants, 3);
     planted_set_crosshair(&image, plants, total, 4);
     clock_t end_time = clock();
     double elapsed_time =

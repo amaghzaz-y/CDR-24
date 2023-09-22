@@ -136,6 +136,8 @@ int planted_full(struct Image *image, struct Plant *plants) {
   return index;
 }
 // window_size = 10 yields the best results for 240p image
+// window_size = 6 yields the average results for 96p image
+// window_size = 3 is the most precise yet fast for 96p image
 // return total plants pieces detected
 // sliding window mask for fast iteration
 int planted_sliding_window(struct Image *image, struct Plant *plants,
