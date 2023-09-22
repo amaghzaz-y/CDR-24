@@ -194,19 +194,19 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
         };
       } else {
         // MASK OUT THE REST IN BLACK
-        // for (int y = by; y < by + window_size; y++) {
-        //   for (int x = bx; x < bx + window_size; x++) {
-        //     int i =
-        //         y * image->width * image->channels + x * image->channels + 0;
-        //     int j =
-        //         y * image->width * image->channels + x * image->channels + 1;
-        //     int k =
-        //         y * image->width * image->channels + x * image->channels + 2;
-        //     image->data[i] = _BLACK;
-        //     image->data[j] = _BLACK;
-        //     image->data[k] = _BLACK;
-        //   }
-        // }
+        for (int y = by; y < by + window_size; y++) {
+          for (int x = bx; x < bx + window_size; x++) {
+            int i =
+                y * image->width * image->channels + x * image->channels + 0;
+            int j =
+                y * image->width * image->channels + x * image->channels + 1;
+            int k =
+                y * image->width * image->channels + x * image->channels + 2;
+            image->data[i] = _BLACK;
+            image->data[j] = _BLACK;
+            image->data[k] = _BLACK;
+          }
+        }
       }
     }
   }
@@ -265,16 +265,16 @@ void planted_set_crosshair(struct Image *image, struct Plant *plants, int len,
       int i3 = y1 * image->width * image->channels + x * image->channels + 0;
       int j3 = y1 * image->width * image->channels + x * image->channels + 1;
       int k3 = y1 * image->width * image->channels + x * image->channels + 2;
-      image->data[i] = 0;
+      image->data[i] = 255;
       image->data[j] = 0;
       image->data[k] = 0;
-      image->data[i1] = 0;
+      image->data[i1] = 255;
       image->data[j1] = 0;
       image->data[k1] = 0;
-      image->data[i2] = 0;
+      image->data[i2] = 255;
       image->data[j2] = 0;
       image->data[k2] = 0;
-      image->data[i3] = 0;
+      image->data[i3] = 255;
       image->data[j3] = 0;
       image->data[k3] = 0;
     }

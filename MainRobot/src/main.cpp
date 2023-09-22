@@ -15,8 +15,8 @@ void setup() {
   Serial.println();
 
   camera_config_t config;
-  config.ledc_channel = LEDC_CHANNEL_0;
-  config.ledc_timer = LEDC_TIMER_0;
+  // config.ledc_channel = LEDC_CHANNEL_0;
+  // config.ledc_timer = LEDC_TIMER_0;
   config.pin_d0 = Y2_GPIO_NUM;
   config.pin_d1 = Y3_GPIO_NUM;
   config.pin_d2 = Y4_GPIO_NUM;
@@ -34,17 +34,12 @@ void setup() {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.frame_size = FRAMESIZE_UXGA;
-  config.pixel_format = PIXFORMAT_JPEG;  // for streaming
-  // config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
+  config.frame_size = FRAMESIZE_96X96;
+  config.pixel_format = PIXFORMAT_RAW;
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
-  config.fb_location = CAMERA_FB_IN_PSRAM;
+  config.fb_location = CAMERA_FB_IN_DRAM;
   config.jpeg_quality = 12;
   config.fb_count = 1;
-
-  // Best option for face detection/recognition
-  config.frame_size = FRAMESIZE_240X240;
-
   // camera init
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
