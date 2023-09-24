@@ -192,22 +192,23 @@ int planted_sliding_window(struct Image *image, struct Plant *plants,
           plants[index].y = plant.y;
           index += 1;
         };
-      } else {
-        // MASK OUT THE REST IN BLACK
-        for (int y = by; y < by + window_size; y++) {
-          for (int x = bx; x < bx + window_size; x++) {
-            int i =
-                y * image->width * image->channels + x * image->channels + 0;
-            int j =
-                y * image->width * image->channels + x * image->channels + 1;
-            int k =
-                y * image->width * image->channels + x * image->channels + 2;
-            image->data[i] = _BLACK;
-            image->data[j] = _BLACK;
-            image->data[k] = _BLACK;
-          }
-        }
       }
+      // else {
+      //   // MASK OUT THE REST IN BLACK
+      //   for (int y = by; y < by + window_size; y++) {
+      //     for (int x = bx; x < bx + window_size; x++) {
+      //       int i =
+      //           y * image->width * image->channels + x * image->channels + 0;
+      //       int j =
+      //           y * image->width * image->channels + x * image->channels + 1;
+      //       int k =
+      //           y * image->width * image->channels + x * image->channels + 2;
+      //       image->data[i] = _BLACK;
+      //       image->data[j] = _BLACK;
+      //       image->data[k] = _BLACK;
+      //     }
+      //   }
+      // }
     }
   }
   return index;
